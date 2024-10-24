@@ -8,13 +8,12 @@ Depuração e solução de bugs, pensamento crítico e analítico, segurança e 
 
 ## Participantes
 ### 🚀 Líder Técnico
-[NOME e GITHUB]
+[Guilherme Bley](https://github.com/GuilhermeBley)
 
 ### 👻 Caçadores de Bugs
-* [NOME e GITHUB]
-* [NOME e GITHUB]
-* [NOME e GITHUB]
-* [NOME e GITHUB]
+* [Guilherme Bley](https://github.com/GuilhermeBley)
+* [Jorge Lima](http://github.com/CastionDev)
+* [Vitor Galache](https://github.com/vitor-galache)
 
 ## ⚙️ Tecnologias
 * C# 12
