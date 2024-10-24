@@ -12,6 +12,8 @@ Depuração e solução de bugs, pensamento crítico e analítico, segurança e 
 
 ### 👻 Caçadores de Bugs
 * [Jorge Lima](http://github.com/CastionDev)
+* [Matheus Sanches](https://github.com/MatheusSanches02)
+* [Valmir Silva](https://github.com/vmrsilva)
 * [Vitor Galache](https://github.com/vitor-galache)
 
 ## ⚙️ Tecnologias
