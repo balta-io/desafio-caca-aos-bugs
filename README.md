@@ -11,7 +11,6 @@ Depuração e solução de bugs, pensamento crítico e analítico, segurança e 
 [Guilherme Bley](https://github.com/GuilhermeBley)
 
 ### 👻 Caçadores de Bugs
-* [Guilherme Bley](https://github.com/GuilhermeBley)
 * [Jorge Lima](http://github.com/CastionDev)
 * [Vitor Galache](https://github.com/vitor-galache)
 
