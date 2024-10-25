@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "Secret123!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./sqlserver-data:/var/opt/mssql
+
+  blazorapp:
+    build:
+      context: ./Dima.Web
+      dockerfile: Dockerfile
+    container_name: blazorapp
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5028:80"
+    depends_on:
+      - sqlserver
+    networks:
+      - app-network
+
+  webapi:
+    build:
+      context: ./Dima.Api
+      dockerfile: Dockerfile
+    container_name: webapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5164:80"
+    depends_on:
+      - sqlserver
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
