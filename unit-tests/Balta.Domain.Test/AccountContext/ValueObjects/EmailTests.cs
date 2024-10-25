@@ -78,11 +78,30 @@ public class EmailTests
     [Fact]
     public void ShouldExplicitConvertFromString()
     {
+        //
+        // The class 'Email' does not have any conversion from string.
+        //
     }
 
     [Fact]
-    public void ShouldExplicitConvertToString() => Assert.Fail();
+    public void ShouldExplicitConvertToString()
+    {
+        const string validEmail = "myemail@gmail.com";
+
+        var result =
+            Email.ShouldCreate(validEmail, FakeDateTimeProvider.Default);
+
+        Assert.NotEmpty((string)result);
+    }
     
     [Fact]
-    public void ShouldReturnEmailWhenCallToStringMethod() => Assert.Fail();
+    public void ShouldReturnEmailWhenCallToStringMethod()
+    {
+        const string expected = "myemail@gmail.com";
+
+        var result =
+            Email.ShouldCreate(expected, FakeDateTimeProvider.Default);
+
+        Assert.Equal(expected, result.ToString());
+    }
 }
