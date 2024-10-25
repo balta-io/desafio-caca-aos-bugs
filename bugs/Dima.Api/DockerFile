@@ -1,0 +1,17 @@
+# Use the official .NET SDK for building the API project
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy everything and restore as distinct layers
+COPY . .
+RUN dotnet restore
+
+# Publish the app to the /app directory
+RUN dotnet publish -c Release -o /app
+
+# Use the .NET runtime to serve the API
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+COPY --from=build /app .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "Dima.Api.dll"]

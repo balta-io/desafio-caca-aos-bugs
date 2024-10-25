@@ -52,7 +52,7 @@ Sobre o arquivo `appsettings.Development.json`, comece inserindo um valor para o
   "FrontendUrl": "http://localhost:5028",
   "BackendUrl": "http://localhost:5164",
   "ConnectionStrings": {
-    "DefaultConnection": "<insira a string de conexão do BD aqui>"
+    "DefaultConnection": "Server=sqlserver,1433;Database=dima-dev;User Id=sa;Password=Secret123!"
   },
   "StripeApiKey": "",
   "Logging": {
