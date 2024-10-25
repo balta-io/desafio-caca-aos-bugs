@@ -1,9 +1,18 @@
+using Balta.Domain.AccountContext.ValueObjects;
+
 namespace Balta.Domain.Test.AccountContext.ValueObjects;
 
 public class EmailTests
 {
     [Fact]
-    public void ShouldLowerCaseEmail() => Assert.Fail();
+    public void ShouldLowerCaseEmail()
+    {
+        const string expected = "myemail@gmail.com";
+
+        var result = Email.ShouldCreate("MYEMAIL@GMAIL.COM", FakeDateTimeProvider.Default);
+
+        Assert.Equal(expected, result.Address);
+    }
     
     [Fact]
     public void ShouldTrimEmail() => Assert.Fail();
