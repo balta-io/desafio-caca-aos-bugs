@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Balta.Domain.AccountContext.ValueObjects.Exceptions;
+using Balta.Domain.SharedContext.Abstractions;
 using Balta.Domain.SharedContext.ValueObjects;
 
 namespace Balta.Domain.AccountContext.ValueObjects;
@@ -104,6 +105,16 @@ public record Password : ValueObject
         var keyToCheck = algorithm.GetBytes(keySize);
 
         return keyToCheck.SequenceEqual(key);
+    }
+
+    /// <summary>
+    /// Method checks if the password is expired by <see cref="ExpiresAtUtc"/> and <paramref name="provider"/>.
+    /// </summary>
+    /// <param name="provider"></param>
+    /// <returns></returns>
+    public bool IsExpired(IDateTimeProvider? provider = null)
+    {
+
     }
 
     #endregion
