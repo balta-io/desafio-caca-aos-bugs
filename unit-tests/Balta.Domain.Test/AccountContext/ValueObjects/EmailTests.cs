@@ -79,9 +79,9 @@ public class EmailTests
     [Fact]
     public void ShouldExplicitConvertFromString()
     {
-        //
-        // The class 'Email' does not have any conversion from string.
-        //
+        const string validEmail = "myemail@gmail.com";
+
+        Assert.NotNull((Email)validEmail);
     }
 
     [Fact]

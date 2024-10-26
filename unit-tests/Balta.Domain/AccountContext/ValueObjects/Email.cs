@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Balta.Domain.AccountContext.Providers;
 using Balta.Domain.AccountContext.ValueObjects.Exceptions;
 using Balta.Domain.SharedContext.Abstractions;
 using Balta.Domain.SharedContext.Extensions;
@@ -30,7 +31,7 @@ public partial record Email : ValueObject
     public static Email ShouldCreate(string address, IDateTimeProvider dateTimeProvider)
     {
         address = address.Trim();
-        address = address.ToLower();
+        address = address.ToLowerInvariant();
 
         if (!EmailRegex().IsMatch(address))
             throw new InvalidEmailException();
@@ -60,6 +61,9 @@ public partial record Email : ValueObject
 
     public static implicit operator string(Email email)
         => email.ToString();
+
+    public static implicit operator Email(string address)
+        => ShouldCreate(address, DateTimeProvider.Default);
 
     #endregion
 
