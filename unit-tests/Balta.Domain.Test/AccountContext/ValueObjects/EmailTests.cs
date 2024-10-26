@@ -1,4 +1,5 @@
 using Balta.Domain.AccountContext.ValueObjects;
+using Balta.Domain.AccountContext.ValueObjects.Exceptions;
 
 namespace Balta.Domain.Test.AccountContext.ValueObjects;
 
@@ -52,7 +53,7 @@ public class EmailTests
         var act = ()
             => Email.ShouldCreate(invalidEmail, FakeDateTimeProvider.Default);
 
-        Assert.ThrowsAny<Exception>(act);
+        Assert.ThrowsAny<InvalidEmailException>(act);
     }
 
     [Fact]
