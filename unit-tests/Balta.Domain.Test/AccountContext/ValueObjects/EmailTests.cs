@@ -5,22 +5,24 @@ namespace Balta.Domain.Test.AccountContext.ValueObjects;
 
 public class EmailTests
 {
-    [Fact]
-    public void ShouldLowerCaseEmail()
+    [Theory]
+    [InlineData("FAKE@EMAIL.COM", "fake@email.com")]
+    [InlineData("FaKe@EmAIL.COM", "fake@email.com")]
+    [InlineData("Fake@EmaiL.COM", "fake@email.com")]
+    public void ShouldLowerCaseEmail(string email, string expected)
     {
-        const string expected = "myemail@gmail.com";
-
-        var result = Email.ShouldCreate("MYEMAIL@GMAIL.COM", FakeDateTimeProvider.Default);
+        var result = Email.ShouldCreate(email, FakeDateTimeProvider.Default);
 
         Assert.Equal(expected, result.Address);
     }
-    
-    [Fact]
-    public void ShouldTrimEmail()
-    {
-        const string expected = "myemail@gmail.com";
 
-        var result = Email.ShouldCreate(" " + expected + " ", FakeDateTimeProvider.Default);
+    [Theory]
+    [InlineData(" fake@email.com", "fake@email.com")]
+    [InlineData("  fake@email.com ", "fake@email.com")]
+    [InlineData("fake@email.com ", "fake@email.com")]
+    public void ShouldTrimEmail(string email, string expected)
+    {
+        var result = Email.ShouldCreate(email, FakeDateTimeProvider.Default);
 
         Assert.Equal(expected, result.Address);
     }
@@ -45,32 +47,37 @@ public class EmailTests
         Assert.ThrowsAny<Exception>(act);
     }
 
-    [Fact]
-    public void ShouldFailIfEmailIsInvalid()
+    [Theory]
+    [InlineData("fake@email")]
+    [InlineData("fakeemail.com")]
+    [InlineData("fake#email.com")]
+    [InlineData("fake!email.com")]
+    public void ShouldFailIfEmailIsInvalid(string invalidEmail)
     {
-        const string invalidEmail = "invalidemail";
-
         var act = ()
             => Email.ShouldCreate(invalidEmail, FakeDateTimeProvider.Default);
 
         Assert.ThrowsAny<InvalidEmailException>(act);
     }
 
-    [Fact]
-    public void ShouldPassIfEmailIsValid()
+    [Theory]
+    [InlineData("fake@email.com.br")]
+    [InlineData("teste@gmail.com")]
+    [InlineData("teste@hotmail.com")]
+    [InlineData("teste@hotmail.com.ar")]
+    public void ShouldPassIfEmailIsValid(string validEmail)
     {
-        const string validEmail = "myemail@gmail.com";
-
         var result = Email.ShouldCreate(validEmail, FakeDateTimeProvider.Default);
 
         Assert.NotEmpty(result.Address);
     }
 
-    [Fact]
-    public void ShouldHashEmailAddress()
+    [Theory]
+    [InlineData("test@email.com")]
+    [InlineData("test@fakemail.com")]
+    [InlineData("test@fakemail.com.br")]
+    public void ShouldHashEmailAddress(string validEmail)
     {
-        const string validEmail = "myemail@gmail.com";
-
         var result = Email.ShouldCreate(validEmail, FakeDateTimeProvider.Default);
 
         Assert.NotEmpty(result.Hash);
