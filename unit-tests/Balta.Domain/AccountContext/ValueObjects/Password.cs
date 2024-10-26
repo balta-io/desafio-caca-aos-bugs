@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Balta.Domain.AccountContext.Providers;
 using Balta.Domain.AccountContext.ValueObjects.Exceptions;
 using Balta.Domain.SharedContext.Abstractions;
 using Balta.Domain.SharedContext.ValueObjects;
@@ -9,6 +10,7 @@ public record Password : ValueObject
 {
     #region Constants
 
+    private const int DefaultExpirationInMinutes = 5;
     private const int MinLength = 8;
     private const int MaxLength = 48;
     private const string Valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -18,10 +20,10 @@ public record Password : ValueObject
 
     #region Constructors
 
-    private Password(string hash)
+    private Password(string hash, DateTime? expiresAtUtc)
     {
         Hash = hash;
-        ExpiresAtUtc = null;
+        ExpiresAtUtc = expiresAtUtc;
         MustChange = false;
     }
 
@@ -30,6 +32,11 @@ public record Password : ValueObject
     #region Factories
 
     public static Password ShouldCreate(string plainText)
+        => ShouldCreate(plainText, provider: null);
+
+    public static Password ShouldCreate(
+        string plainText,
+        IDateTimeProvider? provider)
     {
         if (string.IsNullOrEmpty(plainText))
             throw new InvalidPasswordException("Password cannot be null or empty");
@@ -45,7 +52,9 @@ public record Password : ValueObject
 
         var hash = ShouldHashPassword(plainText);
         
-        return new Password(hash);
+        return new Password(
+            hash,
+            expiresAtUtc: provider?.UtcNow.Add(TimeSpan.FromMinutes(DefaultExpirationInMinutes)));
     }
 
     #endregion
@@ -114,7 +123,13 @@ public record Password : ValueObject
     /// <returns></returns>
     public bool IsExpired(IDateTimeProvider? provider = null)
     {
+        provider = provider ?? DateTimeProvider.Default;
 
+        if (ExpiresAtUtc is null ||
+            ExpiresAtUtc < provider.UtcNow)
+            return true;
+
+        return false;
     }
 
     #endregion

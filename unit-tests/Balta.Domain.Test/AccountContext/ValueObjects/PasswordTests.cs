@@ -100,15 +100,24 @@ public class PasswordTests
     {
         var result = Password.ShouldCreate("validPass123!");
 
-        Assert.True(result.ExpiresAtUtc < DateTime.UtcNow);
+        Assert.True(result.IsExpired());
     }
     
     [Fact]
-    public void ShouldFailIfPasswordIsExpired() => Assert.Fail();
+    public void ShouldFailIfPasswordIsExpired()
+    {
+        Assert.Fail();
+    }
     
     [Fact]
-    public void ShouldMarkPasswordAsMustChange() => Assert.Fail();
-    
+    public void ShouldMarkPasswordAsMustChange()
+    {
+        Assert.Fail();
+    }
+
     [Fact]
-    public void ShouldFailIfPasswordIsMarkedAsMustChange() => Assert.Fail();
+    public void ShouldFailIfPasswordIsMarkedAsMustChange()
+    {
+        Assert.Fail();
+    }
 }
