@@ -26,7 +26,10 @@ builder.Services.AddScoped(x =>
 builder.Services.AddMudServices();
 
 builder.Services
-    .AddHttpClient(Configuration.HttpClientName, opt => { opt.BaseAddress = new Uri(Configuration.BackendUrl); })
+    .AddHttpClient(Configuration.HttpClientName, opt =>
+    {
+        opt.BaseAddress = new Uri(Configuration.BackendUrl);
+    })
     .AddHttpMessageHandler<CookieHandler>();
 
 builder.Services.AddTransient<IAccountHandler, AccountHandler>();

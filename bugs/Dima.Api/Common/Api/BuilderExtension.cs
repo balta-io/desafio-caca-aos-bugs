@@ -39,6 +39,14 @@ public static class BuilderExtension
             .AddIdentityCookies();
 
         builder.Services.AddAuthorization();
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.SameSite = SameSiteMode.None;
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.ExpireTimeSpan = TimeSpan.FromDays(30);
+            options.SlidingExpiration = true;
+        });
     }
 
     public static void AddDataContexts(this WebApplicationBuilder builder)
@@ -64,6 +72,7 @@ public static class BuilderExtension
                         Configuration.BackendUrl,
                         Configuration.FrontendUrl
                     ])
+                    .SetIsOriginAllowed((host) => true) // this for using localhost address
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
