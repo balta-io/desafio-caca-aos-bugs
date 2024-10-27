@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY ["Dima.Core/Dima.Core.csproj", "Dima.Core/"]
+COPY ["Dima.Api/Dima.Api.csproj", "Dima.Api/"]
+RUN dotnet restore "Dima.Api/Dima.Api.csproj"
+
+COPY . .
+WORKDIR "/src/Dima.Api"
+RUN dotnet build -c Release -o /app/build
+
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 80
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ConnectionStrings=""
+
+ENTRYPOINT ["dotnet", "Dima.Api.dll"]

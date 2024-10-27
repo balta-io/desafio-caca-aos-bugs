@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  dilma-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80" # Mapeamento de porta, o app roda na porta 80 e expõe na 8080
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings=Server=db;Database=DilmaDb;User=sa;Password=D3s@f10B@lt@;
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=D3s@f10B@lt@
+    ports:
+      - "1433:1433" 
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+volumes:
+  sqlserver_data:
