@@ -13,10 +13,11 @@ public class VerificationCode
     
     #region Constructors
 
-    private VerificationCode(string code, DateTime expiresAtUtc)
+    private VerificationCode(string code, DateTime expiresAtUtc, IDateTimeProvider provider)
     {
-        Code = Guid.NewGuid().ToString("N")[..MinLength].ToUpper();
-        ExpiresAtUtc = DateTime.UtcNow.AddMinutes(5);
+        Code = code;
+        ExpiresAtUtc = expiresAtUtc;
+        _provider = provider;
     }
 
     #endregion
@@ -26,7 +27,8 @@ public class VerificationCode
     public static VerificationCode ShouldCreate(IDateTimeProvider dateTimeProvider) =>
         new(
             Guid.NewGuid().ToString("N")[..MinLength].ToUpper(), 
-            dateTimeProvider.UtcNow.AddMinutes(5));
+            dateTimeProvider.UtcNow.AddMinutes(5),
+            dateTimeProvider);
 
     #endregion
 
@@ -34,6 +36,10 @@ public class VerificationCode
 
     public string Code { get; }
     public DateTime? ExpiresAtUtc { get; private set; }
+    public bool IsExpired => _provider.UtcNow > ExpiresAtUtc;
+
+    private IDateTimeProvider _provider;
+
     public DateTime? VerifiedAtUtc { get; private set; }
     public bool IsActive => VerifiedAtUtc != null && ExpiresAtUtc is null;
 
@@ -69,7 +75,10 @@ public class VerificationCode
 
     #region Others
 
-    public override string ToString() => Code;
+    public override string ToString() =>
+        IsExpired
+        ? throw new Exception("The code already expired.")
+        : Code;
 
     #endregion
 }

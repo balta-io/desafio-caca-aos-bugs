@@ -19,4 +19,9 @@ internal class FakeDateTimeProvider
         : this(null)
     {
     }
+
+    public void ChangeDate(DateTime dateTime)
+    {
+        _staticDateTime = dateTime;
+    }
 }
