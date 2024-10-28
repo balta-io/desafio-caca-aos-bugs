@@ -45,42 +45,41 @@ pass  : D1m@D1m@
 
 ## 🐞BUG 2 - Erro na Home do App
 
-Agora dentro do sistema vamos abrir o DevTools(F12) e indo na aba do network foi constatado o bug descrito no .pdf.
+Dentro do sistema, vamos abrir o DevTools (F12) e ir até a aba de Network. Foi possível constatar o bug descrito no `.pdf`.
 
 ![image](./evidencias/BUG2/bug02-001-erro_encontrado_no_network.PNG)
 
-Agora vamos realizar o debug do endpoint expenses chegamos no metodo GetExpensesByReportAsync
+Agora, vamos fazer o debug do endpoint `expenses`, chegando no método `GetExpensesByReportAsync`.
 
 ![image](./evidencias/BUG2/02.001-debug.PNG)
 
-Continuando o redug dessa consulta.
+Continuando o debug desta consulta:
 
 ![image](./evidencias/BUG2/02.002-debug.PNG)
 
-Ao executar caimos na exeção.
+Ao executar, encontramos a exceção.
 
 ![image](./evidencias/BUG2/02.003-debug.PNG)
 
-Realizando a pesquisa dentro da solução encontramos onde está mapeado a view.
+Investigando dentro da solução, encontramos onde a view está mapeada.
 
 ![image](./evidencias/BUG2/02.004-debug.PNG)
 
-Porem olhando no banco não encontramos a view.
+Porém, ao consultar o banco, não encontramos a view.
 
 ![image](./evidencias/BUG2/bug02-002-banco_sem_views.PNG)
 
-Mas procurando no código vimos que temos disponível os scripts para criação.
+Analisando o código, vimos que os scripts para criação das views estão disponíveis.
 
 ![image](./evidencias/BUG2/bug02-003-scripts_das_views.PNG)
 
-Nesse ponto poderia pegar os scripts e executalos novamente no banco, porem ao passar para outro dev isso poderia tornar um
-habito custoso e que muitas vezes esquecido gerando um tempo para iniciar a aplicação maior, por isso escolhi executando o comando para criar um nova migration para incluir os scripts e deixar o processo mais automatizado.
+Neste ponto, poderíamos executar os scripts manualmente, mas passar essa responsabilidade para outro dev poderia se tornar um hábito custoso e fácil de esquecer, aumentando o tempo necessário para iniciar a aplicação. Por isso, decidi criar uma nova migration para incluir esses scripts e automatizar o processo.
 
 ```bash
 dotnet ef migrations add CreateViews
 ```
 
-E lá vamos nós novamente novamente subir a migration.
+E lá vamos nós subir a migration.
 
 ```bash
 dotnet ef database update 
@@ -88,39 +87,39 @@ dotnet ef database update
 
 ![image](./evidencias/BUG2/bug02-004-views_criadas.PNG)
 
-Antes de volta para o nosso querigo debug do código, vi que havia uma pasta chamda Scripts com um seed.sql já que criamos uma migration para as views, por que não já criar um para o seeds😎.
+Antes de voltar ao nosso querido debug, notei que havia uma pasta chamada Scripts com um seed.sql. Já que criamos uma migration para as views, por que não criar uma para os seeds também? 😎
 
 ```text
 🚨🚨🚨🚨 
-Em uma aplicação real, existem seeds que PRECISÃO estar em produção (exemplo tabelas de tipos/types), e outros seeds que servem apenas para o desenvolvimento, então essa ação pode não ser a recomendada no dia dia, mas é questão de avaliar caso a caso.
+Em uma aplicação real, existem seeds que PRECISAM estar em produção (por exemplo, tabelas de tipos/types) e outros que servem apenas para desenvolvimento. Por isso, essa ação pode não ser recomendada no dia a dia e deve ser avaliada caso a caso.
 🚨🚨🚨🚨 
 ```
 
-Discrime feito, borá criar o migration para aplicar os seeds.
+Com esse disclaimer feito, vamos criar a migration para aplicar os seeds.
 
 ```bash
 dotnet ef migrations add ApplySeeds
 ```
 
-E lá vamos nós novamente novamente.
+E lá vamos nós de novo.
 
 ```bash
 dotnet ef database update 
 ```
 
-Validando se os migrations forão aplicados.
+Validando se as migrations foram aplicadas:
 
 ![image](./evidencias/BUG2/bug02-005-seed_aplicado.PNG)
 
-Validando se uns dos seed foi aplicado.
+Verificando se um dos seeds foi aplicado com sucesso:
 
 ![image](./evidencias/BUG2/bug02-006-validando_dados_inseridos.PNG)
 
-Voltando a DevToolts na aba network vimos que não temos mais os erros.
+Voltando ao DevTools na aba de Network, vimos que não temos mais erros.
 
 ![image](./evidencias/BUG2/bug02-007-sem_erros.PNG)
 
-E na tela inicial terminou de carregar.
+E na tela inicial, tudo carregou corretamente.
 
 ![image](./evidencias/BUG2/bug02-008-home.PNG)
 
@@ -149,96 +148,111 @@ Vamos aplicar a correção de instanciar a lista que é apresentada na tela, e u
 Agora realizando o teste novamente, pode-se ver que a pela carregou normalmente, borá para o proximo bug que o negócio está ficando quente🔥.
 ![image](./evidencias/BUG3/bug03-005-screen_categories.PNG)
 
-## 🐞BUG 4 - Categoria não é criada
+## 🐞 BUG 4 - Erro ao Criar Categoria
 
-Ao tentar replicar o erro de criar uma categoria recebemos o erro abaixo, o erro é diferente do apresentado, mas bora atrás da correção.
+Ao tentar replicar o erro de criação de uma categoria, recebemos um erro diferente do descrito, mas vamos atrás da correção!
 
 ![image](./evidencias/BUG4/bug04-001-try-replicated-error.PNG)
 
-No projeto Web vamos ferificar o hanldle de criação, aqui já chama atenção o está com methodo http put, porem antes de alterar vamos verificar a implementação na api.
+No projeto Web, vamos verificar o handler de criação. Aqui já chama a atenção o fato de o método HTTP estar como `PUT`. Porém, antes de alterar, vamos conferir a implementação na API.
 
 ![image](./evidencias/BUG4/bug04-002-handle_web.PNG)
 
-Verificando a implementação na api é possivle ver que a implemntação está como metodo http post, agora fazendo sentido o erro.
+Verificando a implementação na API, é possível ver que ela está como método HTTP `POST`, o que explica o erro.
 
 ![image](./evidencias/BUG4/bug04-003-mapPost.PNG)
 
-Vamos ajustar a implmentação para o metodo http post que foi implementado e por convenção para criação é o correto a ser aplicado.
+Vamos ajustar a implementação para o método HTTP `POST`, que foi o método implementado e é o correto a ser usado por convenção para criação.
 
 ![image](./evidencias/BUG4/bug04-004-change_hanble.PNG)
 
-Realizando um novo teste de salvamento.
+Realizando um novo teste de salvamento:
 
 ![image](./evidencias/BUG4/bug04-005-save_test.PNG)
 
-Voltando na tela de listagem podemos ver o nosso registro criado corretamente.
+Voltando à tela de listagem, podemos ver que o nosso registro foi criado corretamente.
 
 ![image](./evidencias/BUG4/bug04-006-list_item_after_save.PNG)
 
-Trem que pula, bora gente, só falta mais dois bugzinhos 🐞 para terminarmos nossa jornada.
+Trem que pula! Bora gente, só faltam mais dois bugzinhos 🐞 para terminarmos nossa jornada.
 
-## 🐞BUG 5 - Transação é criada mas não aparece
+## 🐞 BUG 5 - Transação é criada mas não aparece
 
-Agora vamos para a parte de transação, ao tentar replicar o erro recebemos a mensagem que transação foi salva.
+Agora vamos para a parte de transação. Ao tentar replicar o erro, recebemos a mensagem de que a transação foi salva.
 
 ![image](./evidencias/BUG5/bug05-001-new_transaction.PNG)
 
-Ao ferificar o dev tools, não temos nenhum erro para obter a lista.
+Ao verificar o DevTools, não encontramos nenhum erro ao tentar obter a lista.
 
 ![image](./evidencias/BUG5/bug05-002-dev-tools.PNG)
 
-Porem ao checar o bnaco de dados pode-se verificar que nosso registro não foi salvo 😨.
+Porém, ao checar o banco de dados, vemos que o nosso registro não foi salvo 😨.
 
 ![image](./evidencias/BUG5/bug05-003-check_in_database.PNG)
 
-Ao abrir o handler de salvamento a IDL nossa amiga 😗 já está dando dois warning onde está realizando operações assincronar sem utilizar o await, bora adicionar o await e testar novamente.
+Ao abrir o handler de salvamento, a IDE (nossa amiga 😗) já está dando dois warnings indicando operações assíncronas sem o uso de `await`. Bora adicionar o `await` e testar novamente.
 
 ![image](./evidencias/BUG5/bug05-004-created_error.PNG)
 
-Criando uma nova transação, agora vai.
+Criando uma nova transação... agora vai!
 
 ![image](./evidencias/BUG5/bug05-005-new_transaction.PNG)
 
-Vixi nossa transação foi salva, porem ficou com o id de outro usuário 😅, melhor que nada né.
+Ops, nossa transação foi salva, mas com o ID de outro usuário 😅. Bom, melhor que nada, né?
 
 ![image](./evidencias/BUG5/bug05-006_created_transaction_to_anothe_user.PNG)
 
-Voltando ao codigo, bora ajustar o preenchimento com o user id da requisição.
+Voltando ao código, vamos ajustar para preencher o `userId` corretamente com o ID do usuário da requisição.
 
 ![image](./evidencias/BUG5/bug05-007-fix_userId.PNG)
 
-E lá vamos nós 🚂, criar outra transação.
+E lá vamos nós 🚂, criando outra transação.
 
 ![image](./evidencias/BUG5/bug05-008-new_transaction.PNG)
 
-Agora listou na tela, ufa😁.
+Agora a transação aparece na tela, ufa 😁.
 
 ![image](./evidencias/BUG5/bug05-009-list_ok.PNG)
 
-Olhando na base tb pode-mos verificar que o registro agora está para o nosso userid.
+Verificando no banco de dados, podemos confirmar que o registro agora está associado ao nosso `userId`.
 
 ![image](./evidencias/BUG5/bug05-010-check_database.PNG)
 
-## 🐞BUG 6 - Atualização de uma transação não funciona
+## 🐞 BUG 6 - Atualização de uma transação não funciona
 
-Chegamos no ultimo chefão, bora acabar com ele 💪.
+Chegamos no último chefão! Bora acabar com ele 💪.
 
-Ao tentar editar o registro, somos recebido com o erro. 
+Ao tentar editar o registro, somos recebidos com o erro abaixo:
 
 ![image](./evidencias/BUG6/bug06-002_edinting_error.PNG)
 
-Porem ao realizar a correção do BUG 5, já foi possivel ver que no TransactionHandler o updateAsync havia sido esquecido de ser implementado, algum deve estava com pressa de terminar sua User Story 😒, espero que ainda não tenha passado pelo PR-Review 🙏.
+Porém, ao realizar a correção do **BUG 5**, já conseguimos ver que no `TransactionHandler` o `updateAsync` havia sido esquecido de ser implementado. Alguém deve ter se apressado para terminar a User Story 😒. Espero que ainda não tenha passado pelo PR-Review 🙏.
 
 ![image](./evidencias/BUG6/bug06-003-not_implemented.PNG)
 
-Vamos implementar o codigo, sem dar ctrl+c e ctrl+v no categoria e trocar as variáveis e descrição.
+Vamos implementar o código, e sem dar aquele clássico `ctrl+c` e `ctrl+v` do método de categoria, só trocando variáveis e descrição 😅.
 
 ![image](./evidencias/BUG6/bug06-004-implemented_code.PNG)
 
-agora com o metodo implementado vamos realizar outro teste de edição.
+Agora, com o método implementado, vamos realizar outro teste de edição.
 
 ![image](./evidencias/BUG6/bug06-005-edit_test.PNG)
 
-Aeeeeee, registro editado com sucesso.
+Aeeeeee! Registro editado com sucesso 🎉.
 
 ![image](./evidencias/BUG6/bug06-006-transaction_updateded.PNG)
+
+## PLUS 
+
+Para enriquecer os testes, vamos criar um usuário com vários registros no seed:
+
+```text
+email : teste@balta.io
+pass  : D1m@D1m@
+```
+
+Olha como a tela inicial fica mais rica de informações com esse usuário:
+
+![image](./evidencias/PLUS/plus-001-dashboard.PNG)
+
+![image](./evidencias/PLUS/plus-002-dashboard.PNG)
