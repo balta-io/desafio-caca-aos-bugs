@@ -41,7 +41,7 @@ public class VerificationCode
     private IDateTimeProvider _provider;
 
     public DateTime? VerifiedAtUtc { get; private set; }
-    public bool IsActive => VerifiedAtUtc != null && ExpiresAtUtc is null;
+    public bool IsActive => VerifiedAtUtc is null;
 
     #endregion
 
