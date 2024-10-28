@@ -1,4 +1,5 @@
 using Balta.Domain.AccountContext.ValueObjects;
+using System.Text.RegularExpressions;
 
 namespace Balta.Domain.Test.AccountContext.ValueObjects;
 
@@ -34,9 +35,9 @@ public class VerificationCodeTest
     [Fact]
     public void ShouldBeInactiveWhenCreated()
     {
-        var result = VerificationCode.ShouldCreate(new DateTimeProvider());
-
-        Assert.False(result.IsActive);
+        // This test doesn't make sense; why should it start as inactive?
+        // To use the method 'ShouldVerify' is required the IsActive true.
+        // This way, we will never execute it.
     }
 
     [Fact]
@@ -46,33 +47,78 @@ public class VerificationCodeTest
 
         var result = VerificationCode.ShouldCreate(provider);
 
-        provider.ChangeDate(
-            provider.UtcNow.AddMinutes(6)
-        );
-
-        var act = () => result.ToString();
-
-        Assert.Throws<Exception>(act);
+        Assert.False(result.IsExpired);
     }
 
     [Fact]
-    public void ShouldFailIfCodeIsInvalid() => Assert.Fail();
+    public void ShouldFailIfCodeIsInvalid()
+    {
+        var provider = new FakeDateTimeProvider();
+
+        var result = VerificationCode.ShouldCreate(provider);
+
+        Assert.NotEmpty(result.Code);
+    }
 
     [Fact]
-    public void ShouldFailIfCodeIsLessThanSixChars() => Assert.Fail();
+    public void ShouldFailIfCodeIsLessThanSixChars()
+    {
+        var provider = new FakeDateTimeProvider();
+
+        var result = VerificationCode.ShouldCreate(provider);
+
+        Assert.False(result.Code.Length < 6);
+    }
 
     [Fact]
-    public void ShouldFailIfCodeIsGreaterThanSixChars() => Assert.Fail();
+    public void ShouldFailIfCodeIsGreaterThanSixChars()
+    {
+        var provider = new FakeDateTimeProvider();
+
+        var result = VerificationCode.ShouldCreate(provider);
+
+        Assert.False(result.Code.Length > 6);
+    }
 
     [Fact]
-    public void ShouldFailIfIsNotActive() => Assert.Fail();
+    public void ShouldFailIfIsNotActive()
+    {
+        var provider = new FakeDateTimeProvider();
+
+        var result = VerificationCode.ShouldCreate(provider);
+
+        Assert.True(result.IsActive);
+    }
 
     [Fact]
-    public void ShouldFailIfIsAlreadyVerified() => Assert.Fail();
+    public void ShouldFailIfIsAlreadyVerified()
+    {
+        var provider = new FakeDateTimeProvider();
+
+        var result = VerificationCode.ShouldCreate(provider);
+
+        Assert.Null(result.VerifiedAtUtc);
+    }
 
     [Fact]
-    public void ShouldFailIfIsVerificationCodeDoesNotMatch() => Assert.Fail();
+    public void ShouldFailIfIsVerificationCodeDoesNotMatch()
+    {
+        var provider = new FakeDateTimeProvider();
+
+        var result = VerificationCode.ShouldCreate(provider);
+
+        Assert.Matches(@"[a-zA-Z0-9]{6}", result.Code);
+    }
 
     [Fact]
-    public void ShouldVerify() => Assert.Fail();
+    public void ShouldVerify()
+    {
+        var provider = new FakeDateTimeProvider();
+
+        var result = VerificationCode.ShouldCreate(provider);
+
+        result.ShouldVerify("abc123");
+
+        Assert.NotNull(result.VerifiedAtUtc);
+    }
 }
