@@ -1,6 +1,6 @@
 @inherits IncomesAndExpensesChartComponent
 
-@if (Series is not null)
+@if (!IsLoading)
 {
     <MudChart
         ChartOptions="Options"

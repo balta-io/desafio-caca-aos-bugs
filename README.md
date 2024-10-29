@@ -79,7 +79,7 @@ Após, basta utilizar o comando para criar as tabelas:
 dotnet ef database update
 ```
 
-Partindo para o banco de dados, com um SGDB você deve acessar o database `dima-dev` e executar os comandos contidos em `desafio-caca-aos-bugs\bugs\Dima.Api\Data\Scripts\seed.sql`.
+Partindo para o banco de dados, com um SGDB você deve acessar o database `dima-dev` e executar os comandos contidos em `desafio-caca-aos-bugs\bugs\Dima.Api\Data\Scripts\seed.sql` e `desafio-caca-aos-bugs\bugs\Dima.Api\Data\Scripts\views.sql`.
 
 ### Executando API e WEB
 

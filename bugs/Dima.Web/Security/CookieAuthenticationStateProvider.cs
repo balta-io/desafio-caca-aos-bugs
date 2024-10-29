@@ -67,17 +67,18 @@ public class CookieAuthenticationStateProvider(IHttpClientFactory clientFactory)
                     => new Claim(x.Key, x.Value))
         );
 
-        RoleClaim[]? roles;
+        UserInfo? userInfo;
         try
         {
-            roles = await _client.GetFromJsonAsync<RoleClaim[]>("v1/identity/roles");
+            userInfo = await _client.GetFromJsonAsync<UserInfo>("v1/identity/roles")
+                ?? throw new InvalidOperationException("Result can't be null.");
         }
         catch
         {
             return claims;
         }
         
-        foreach (var role in roles ?? [])
+        foreach (var role in userInfo.Roles ?? [])
             if (!string.IsNullOrEmpty(role.Type) && !string.IsNullOrEmpty(role.Value))
                 claims.Add(new Claim(role.Type, role.Value, role.ValueType, role.Issuer, role.OriginalIssuer));
 

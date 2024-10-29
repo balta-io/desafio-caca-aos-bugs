@@ -8,7 +8,7 @@ namespace Dima.Web.Components.Reports;
 public partial class IncomesByCategoryChartComponent : ComponentBase
 {
     #region Properties
-
+    public bool IsLoading { get; private set; } = true;
     public List<double> Data { get; set; } = [];
     public List<string> Labels { get; set; } = [];
 
@@ -38,9 +38,11 @@ public partial class IncomesByCategoryChartComponent : ComponentBase
         if (!result.IsSuccess || result.Data is null)
         {
             Snackbar.Add("Falha ao obter dados do relatório", Severity.Error);
+            IsLoading = false;
             return;
         }
 
+        IsLoading = false;
         foreach (var item in result.Data)
         {
             Labels.Add($"{item.Category} ({item.Incomes:C})");
