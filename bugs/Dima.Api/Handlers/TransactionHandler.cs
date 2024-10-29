@@ -5,7 +5,6 @@ using Dima.Core.Handlers;
 using Dima.Core.Models;
 using Dima.Core.Requests.Transactions;
 using Dima.Core.Responses;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dima.Api.Handlers;
@@ -41,9 +40,32 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
         }
     }
 
-    public Task<Response<Transaction?>> UpdateAsync(UpdateTransactionRequest request)
+    public async Task<Response<Transaction?>> UpdateAsync(UpdateTransactionRequest request)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var transaction = await context.Transactions
+                .FirstOrDefaultAsync(e => e.Id == request.Id);
+
+            if (transaction is null || transaction.UserId != request.UserId)
+            {
+                return new Response<Transaction?>(null, 404, "Transação não foi encontrada.");
+            }
+
+            transaction.CategoryId = request.CategoryId;
+            transaction.Amount = request.Amount;
+            transaction.PaidOrReceivedAt = request.PaidOrReceivedAt;
+            transaction.Title = request.Title;
+            transaction.Type = request.Type;
+            
+            await context.SaveChangesAsync();
+
+            return new Response<Transaction?>(transaction, 200, "Transação atualizada com sucesso!");
+        }
+        catch
+        {
+            return new Response<Transaction?>(null, 500, "Não foi possível alterar sua transação");
+        }
     }
 
     public async Task<Response<Transaction?>> DeleteAsync(DeleteTransactionRequest request)
