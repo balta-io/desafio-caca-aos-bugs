@@ -1,0 +1,26 @@
+# Usando a imagem do SDK .NET para a construção
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+# Definindo o diretório de trabalho
+WORKDIR /src
+
+# Copiando os arquivos de projeto
+COPY ["Dima.Core/Dima.Core.csproj", "Dima.Core/"]
+COPY ["Dima.Api/Dima.Api.csproj", "Dima.Api/"]
+RUN dotnet restore "Dima.Api/Dima.Api.csproj"
+
+# Copiando o restante dos arquivos
+COPY . .
+
+# Instala a ferramenta dotnet-ef
+RUN dotnet tool install --global dotnet-ef
+
+# Configura o PATH para incluir a instalação global
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Define variáveis de ambiente necessárias
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ConnectionStrings__DefaultConnection=""
+
+# Comando de entrada para aplicar as migrações
+ENTRYPOINT ["dotnet", "ef", "database", "update", "--startup-project", "Dima.Api/Dima.Api.csproj"]

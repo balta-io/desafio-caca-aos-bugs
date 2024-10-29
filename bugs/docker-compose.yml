@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   dima-api:  
     build:
@@ -36,6 +35,7 @@ services:
       - "1433:1433" 
     volumes:
       - sqlserver_data:/var/opt/mssql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql  
     networks:
       - app-network
 

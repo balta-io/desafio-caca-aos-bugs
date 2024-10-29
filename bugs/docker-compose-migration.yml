@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  dima-migration:  
+    build:
+      context: .
+      dockerfile: dockerfile.migration
+    depends_on:
+      - db
+    environment:      
+      - ConnectionStrings__DefaultConnection=Server=db;Database=DimaDb;User Id=sa;Password=D3s@f10B@lt@;TrustServerCertificate=true;
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge  

@@ -20,6 +20,8 @@ Depuração e solução de bugs, pensamento crítico e analítico, segurança e 
 * Minimal APIs
 * Blazor Web Assembly
 * xUnit
+* [MakeFile](https://www.gnu.org/software/make/#download)
+* [Docker](https://docs.docker.com/engine/install/)
 
 ## 🥋 Skills Desenvolvidas
 * Comunicação
@@ -27,11 +29,42 @@ Depuração e solução de bugs, pensamento crítico e analítico, segurança e 
 * Networking
 * Muito conhecimento técnico
 
-## 🧪 Como testar o projeto
-[DESCREVER COMO EXECUTAR O PROJETO]
 
 # 💜 Participe
 Quer participar dos próximos desafios? Junte-se a [maior comunidade .NET do Brasil 🇧🇷 💜](https://balta.io/discord)
+
+## 🧪 Como testar o projeto
+
+Ele utiliza Docker para facilitar a configuração e oferece um Makefile para agilizar os comandos de inicialização.
+
+#### Utilizando o MakeFile:
+
+```text
+cd bugs
+make up
+make migrations
+```
+
+#### Sem utilizar o MakeFile:
+
+```text
+cd bugs
+docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose-migration.yml up --build --abort-on-container-exit
+```
+
+Depois de iniciar o projeto entrat no [UI](http://localhost:5028) e criar o usuário com e-mail (teste@balta.io).
+
+```text
+email : teste@balta.io
+pass  : D1m@D1m@
+```
+
+Se quiser mudar o nome do banco é necessário alterar os arquivos:
+
+- init-db.sql
+- docker-compose-migratio.yml (ConnectionStrings__DefaultConnection)
+- docker-compose.yml (ConnectionStrings__DefaultConnection)
 
 # 🕵️‍♂️ Invetigando os bugs🐞 e coleta de evidências 📖
 ## 🐞BUG 1 - Erro na Home do App
