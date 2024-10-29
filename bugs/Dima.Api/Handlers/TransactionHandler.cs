@@ -21,7 +21,7 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
         {
             var transaction = new Transaction
             {
-                UserId = "test@balta.io",
+                UserId = request.UserId,
                 CategoryId = request.CategoryId,
                 CreatedAt = DateTime.Now,
                 Amount = request.Amount,
@@ -30,8 +30,8 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
                 Type = request.Type
             };
 
-            context.Transactions.AddAsync(transaction);
-            context.SaveChangesAsync();
+            await context.Transactions.AddAsync(transaction);
+            await context.SaveChangesAsync();
 
             return new Response<Transaction?>(transaction, 201, "Transação criada com sucesso!");
         }
@@ -43,7 +43,30 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
 
     public async Task<Response<Transaction?>> UpdateAsync(UpdateTransactionRequest request)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var transaction = await context
+                .Transactions
+                .FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == request.UserId);
+
+            if (transaction is null)
+                return new Response<Transaction?>(null, 404, "Transação não encontrada.");
+
+            transaction.Title = request.Title;
+            transaction.PaidOrReceivedAt = request.PaidOrReceivedAt;
+            transaction.Amount = request.Amount;
+            transaction.CategoryId = request.CategoryId;
+            transaction.Type = request.Type;
+
+            context.Transactions.Update(transaction);
+            await context.SaveChangesAsync();
+
+            return new Response<Transaction?>(transaction, message: "Transação atualizada com sucesso.");
+        }
+        catch
+        {
+            return new Response<Transaction?>(null, 500, "Não foi possível alterar a transação");
+        }
     }
 
     public async Task<Response<Transaction?>> DeleteAsync(DeleteTransactionRequest request)
@@ -90,17 +113,8 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
     {
         try
         {
-            request.StartDate ??= DateTime.Now.GetFirstDay();
-            request.EndDate ??= DateTime.Now.GetLastDay();
-        }
-        catch
-        {
-            return new PagedResponse<List<Transaction>?>(null, 500,
-                "Não foi possível determinar a data de início ou término");
-        }
+            InitializeDates(request);
 
-        try
-        {
             var query = context
                 .Transactions
                 .AsNoTracking()
@@ -123,9 +137,25 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
                 request.PageNumber,
                 request.PageSize);
         }
+        catch(ArgumentException)
+        {
+            return new PagedResponse<List<Transaction>?>(null, 500,
+                "Não foi possível determinar a data de início ou término");
+        }
         catch
         {
             return new PagedResponse<List<Transaction>?>(null, 500, "Não foi possível obter as transações");
+        }
+    }
+
+    private static void InitializeDates(GetTransactionsByPeriodRequest request)
+    {
+        request.StartDate ??= DateTime.Now.GetFirstDay();
+        request.EndDate ??= DateTime.Now.GetLastDay();
+
+        if (request.StartDate == null || request.EndDate == null)
+        {
+            throw new ArgumentException("Data de início ou término não pode ser determinada.");
         }
     }
 }
