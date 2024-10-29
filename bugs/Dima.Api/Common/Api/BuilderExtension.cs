@@ -17,8 +17,11 @@ public static class BuilderExtension
         Configuration.ConnectionString =
             builder
                 .Configuration
-                .GetConnectionString("DefaultConnection")
+                .GetConnectionString("DefaultConnection")                
             ?? string.Empty;
+
+        Console.WriteLine("A ConectionString ficou: {0}", Configuration.ConnectionString);
+
         Configuration.BackendUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? string.Empty;
         Configuration.FrontendUrl = builder.Configuration.GetValue<string>("FrontendUrl") ?? string.Empty;
         ApiConfiguration.StripeApiKey = builder.Configuration.GetValue<string>("StripeApiKey") ?? string.Empty;

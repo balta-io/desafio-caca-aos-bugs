@@ -18,6 +18,7 @@ COPY --from=build /app/publish .
 
 EXPOSE 80
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ConnectionStrings=""
+ENV ASPNETCORE_HTTP_PORTS=80
+ENV ConnectionStrings__DefaultConnection=""
 
-ENTRYPOINT ["dotnet", "Dima.Api.dll"]
+ENTRYPOINT ["dotnet", "Dima.Api.dll", "ef", "database", "update"]
