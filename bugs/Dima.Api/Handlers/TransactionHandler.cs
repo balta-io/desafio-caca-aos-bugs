@@ -21,7 +21,7 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
         {
             var transaction = new Transaction
             {
-                UserId = "test@balta.io",
+                UserId = request.UserId,
                 CategoryId = request.CategoryId,
                 CreatedAt = DateTime.Now,
                 Amount = request.Amount,
@@ -30,8 +30,8 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
                 Type = request.Type
             };
 
-            context.Transactions.AddAsync(transaction);
-            context.SaveChangesAsync();
+            await context.Transactions.AddAsync(transaction);
+            await context.SaveChangesAsync();
 
             return new Response<Transaction?>(transaction, 201, "Transação criada com sucesso!");
         }
@@ -41,7 +41,7 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
         }
     }
 
-    public async Task<Response<Transaction?>> UpdateAsync(UpdateTransactionRequest request)
+    public Task<Response<Transaction?>> UpdateAsync(UpdateTransactionRequest request)
     {
         throw new NotImplementedException();
     }
