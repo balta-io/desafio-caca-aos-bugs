@@ -9,7 +9,7 @@ namespace Dima.Web.Components.Reports;
 public partial class IncomesAndExpensesChartComponent : ComponentBase
 {
     #region Properties
-
+    public bool IsLoading { get; private set; } = true;
     public ChartOptions Options { get; set; } = new();
     public List<ChartSeries>? Series { get; set; }
     public List<string> Labels { get; set; } = [];
@@ -34,10 +34,12 @@ public partial class IncomesAndExpensesChartComponent : ComponentBase
         var result = await Handler.GetIncomesAndExpensesReportAsync(request);
         if (!result.IsSuccess || result.Data is null)
         {
+            IsLoading = false;
             Snackbar.Add("Não foi possível obter os dados do relatório", Severity.Error);
             return;
         }
 
+        IsLoading = true;
         var incomes = new List<double>();
         var expenses = new List<double>();
 

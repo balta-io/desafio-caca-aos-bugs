@@ -1,6 +1,6 @@
 @inherits ExpensesByCategoryChartComponent
 
-@if (Data.Count > 0)
+@if (!IsLoading)
 {
     <MudChart
         ChartType="ChartType.Pie"

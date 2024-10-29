@@ -10,6 +10,7 @@ public partial class ExpensesByCategoryChartComponent : ComponentBase
 {
     #region Properties
 
+    public bool IsLoading { get; private set; } = true;
     public List<double> Data { get; set; } = [];
     public List<string> Labels { get; set; } = [];
 
@@ -29,7 +30,14 @@ public partial class ExpensesByCategoryChartComponent : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await GetExpensesByCategoryAsync();
+        try
+        {
+            await GetExpensesByCategoryAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async Task GetExpensesByCategoryAsync()

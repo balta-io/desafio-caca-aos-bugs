@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Dima.Api.Common.Api;
 using Dima.Core.Models.Account;
+using Microsoft.AspNetCore.Identity;
 
 namespace Dima.Api.Endpoints.Identity;
 
@@ -11,7 +12,9 @@ public class GetRolesEndpoint : IEndpoint
             .MapGet("/roles", Handle)
             .RequireAuthorization();
 
-    private static Task<IResult> Handle(ClaimsPrincipal user)
+    private static Task<IResult> Handle(
+        ClaimsPrincipal user,
+        UserManager<Dima.Api.Models.User> userManager)
     {
         if (user.Identity is null || !user.Identity.IsAuthenticated)
             return Task.FromResult(Results.Unauthorized());
@@ -28,6 +31,17 @@ public class GetRolesEndpoint : IEndpoint
                 ValueType = c.ValueType
             });
 
-        return Task.FromResult<IResult>(TypedResults.Json(roles));
+        var userId = userManager.GetUserId(user);
+
+        long.TryParse(userId, out var userIdLong);
+
+        return Task.FromResult<IResult>(
+            TypedResults.Json(
+                new UserInfo
+                {
+                    Roles = roles.ToArray(),
+                    UserId = userIdLong
+                }
+            ));
     }
 }

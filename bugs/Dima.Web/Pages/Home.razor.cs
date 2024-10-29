@@ -1,6 +1,7 @@
 using Dima.Core.Handlers;
 using Dima.Core.Models.Reports;
 using Dima.Core.Requests.Reports;
+using Dima.Web.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
@@ -34,12 +35,13 @@ public partial class HomePage : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         var userId = (await AuthProvider.GetAuthenticationStateAsync())
-            .User;
+            .User
+            .GetUserId();
 
         var request = new GetFinancialSummaryRequest();
         var result = await Handler.GetFinancialSummaryReportAsync(request);
         if (result.IsSuccess)
-            Summary = result.Data;
+            Summary = result.Data ?? new(userId?.ToString() ?? string.Empty, 0, 0);
     }
 
     #endregion

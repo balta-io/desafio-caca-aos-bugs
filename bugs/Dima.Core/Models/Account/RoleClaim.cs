@@ -1,5 +1,11 @@
 namespace Dima.Core.Models.Account;
 
+public class UserInfo
+{
+    public long UserId { get; set; }
+    public RoleClaim[] Roles { get; set; } = [];
+}
+
 public class RoleClaim
 {
     public string? Issuer { get; set; }
