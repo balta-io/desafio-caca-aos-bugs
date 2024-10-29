@@ -20,11 +20,14 @@ public record Password : ValueObject
 
     #region Constructors
 
-    private Password(string hash, DateTime? expiresAtUtc)
+    private Password(
+        string hash, 
+        DateTime? expiresAtUtc,
+        IDateTimeProvider provider)
     {
         Hash = hash;
         ExpiresAtUtc = expiresAtUtc;
-        MustChange = false;
+        _provider = provider;
     }
 
     #endregion
@@ -38,6 +41,8 @@ public record Password : ValueObject
         string plainText,
         IDateTimeProvider? provider)
     {
+        provider = provider ?? DateTimeProvider.Default;
+
         if (string.IsNullOrEmpty(plainText))
             throw new InvalidPasswordException("Password cannot be null or empty");
 
@@ -54,7 +59,8 @@ public record Password : ValueObject
         
         return new Password(
             hash,
-            expiresAtUtc: provider?.UtcNow.Add(TimeSpan.FromMinutes(DefaultExpirationInMinutes)));
+            expiresAtUtc: provider.UtcNow.Add(TimeSpan.FromMinutes(DefaultExpirationInMinutes)),
+            provider: provider);
     }
 
     #endregion
@@ -63,11 +69,26 @@ public record Password : ValueObject
 
     public string Hash { get; }
     public DateTime? ExpiresAtUtc { get; }
-    public bool MustChange { get; }
+    public bool MustChange => IsExpired();
+
+    private readonly IDateTimeProvider _provider;
 
     #endregion
 
     #region Public Methods
+
+    /// <summary>
+    /// Method checks if the password is expired by <see cref="ExpiresAtUtc"/>.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsExpired()
+    {
+        if (ExpiresAtUtc is null ||
+            ExpiresAtUtc < _provider.UtcNow)
+            return true;
+
+        return false;
+    }
 
     public static string ShouldGenerate(
         short length = 16,
@@ -114,22 +135,6 @@ public record Password : ValueObject
         var keyToCheck = algorithm.GetBytes(keySize);
 
         return keyToCheck.SequenceEqual(key);
-    }
-
-    /// <summary>
-    /// Method checks if the password is expired by <see cref="ExpiresAtUtc"/> and <paramref name="provider"/>.
-    /// </summary>
-    /// <param name="provider"></param>
-    /// <returns></returns>
-    public bool IsExpired(IDateTimeProvider? provider = null)
-    {
-        provider = provider ?? DateTimeProvider.Default;
-
-        if (ExpiresAtUtc is null ||
-            ExpiresAtUtc < provider.UtcNow)
-            return true;
-
-        return false;
     }
 
     #endregion
