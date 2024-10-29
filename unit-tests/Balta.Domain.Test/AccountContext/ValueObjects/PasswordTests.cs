@@ -42,7 +42,7 @@ public class PasswordTests
     [Fact]
     public void ShouldFailIfPasswordLenIsGreaterThanMaxChars()
     {
-        var act = () => Password.ShouldCreate("abc@A".PadLeft(40, '0'));
+        var act = () => Password.ShouldCreate("abc@A".PadLeft(49, '0'));
 
         Assert.ThrowsAny<InvalidPasswordException>(act);
     }
@@ -55,12 +55,15 @@ public class PasswordTests
         Assert.NotEmpty(result.Hash);
     }
 
-    [Fact]
-    public void ShouldVerifyPasswordHash()
+    [Theory]
+    [InlineData("validPass123!")]
+    public void ShouldVerifyPasswordHash(string password)
     {
-        var result = Password.ShouldCreate("validPass123!");
+        var result = Password.ShouldCreate(password);
 
-        Assert.Equal("abc1234", result.Hash);
+        var match = Password.ShouldMatch(result.Hash, password);
+
+        Assert.True(match);
     }
 
     [Fact]
@@ -98,7 +101,11 @@ public class PasswordTests
     [Fact]
     public void ShouldMarkPasswordAsExpired()
     {
-        var result = Password.ShouldCreate("validPass123!");
+        var provider = new FakeDateTimeProvider();
+
+        var result = Password.ShouldCreate("validPass123!", provider);
+
+        provider.ChangeDate(DateTime.UtcNow.AddMinutes(5.1));
 
         Assert.True(result.IsExpired());
     }
@@ -106,18 +113,28 @@ public class PasswordTests
     [Fact]
     public void ShouldFailIfPasswordIsExpired()
     {
-        Assert.Fail();
+        var result = Password.ShouldCreate("validPass123!");
+
+        Assert.False(result.IsExpired());
     }
     
     [Fact]
     public void ShouldMarkPasswordAsMustChange()
     {
-        Assert.Fail();
+        var provider = new FakeDateTimeProvider();
+
+        var result = Password.ShouldCreate("validPass123!", provider);
+
+        provider.ChangeDate(DateTime.UtcNow.AddMinutes(5.1));
+
+        Assert.True(result.MustChange);
     }
 
     [Fact]
     public void ShouldFailIfPasswordIsMarkedAsMustChange()
     {
-        Assert.Fail();
+        var result = Password.ShouldCreate("validPass123!");
+
+        Assert.False(result.MustChange);
     }
 }
