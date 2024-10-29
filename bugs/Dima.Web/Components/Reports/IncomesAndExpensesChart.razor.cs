@@ -39,7 +39,7 @@ public partial class IncomesAndExpensesChartComponent : ComponentBase
             return;
         }
 
-        IsLoading = true;
+        IsLoading = false;
         var incomes = new List<double>();
         var expenses = new List<double>();
 
