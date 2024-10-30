@@ -41,11 +41,20 @@ Nesse tópico vai ser abordado como executar localmente o projeto `Dima.Api` e `
 
 ### Criando banco de dados com Docker
 
+Nessa etapa você vai subir a imagem do SQL Server, caso deseje alterar alguma configuração do banco de dados, va no arquivo `...\desafio-caca-aos-bugs\bugs\docker-compose.yml`
 
+Certifique-se de estar no diretório `...\desafio-caca-aos-bugs\bugs` e execute o seguinte comando no console:
+
+```bash
+docker-compose up -d
+```
+
+Seu banco de dados agora está rodando localmente.
 
 ### Adicione as configurações de desenvolvimento
 
-Sobre o arquivo `appsettings.Development.json`, comece inserindo um valor para o campo `ConnectionStrings:DefaultConnection`, esse valor deve ser de acordo com o banco de dados criado no passo anterior.
+Va no arquivo `...\desafio-caca-aos-bugs\bugs\Dima.Api\appsettings.json`, comece inserindo um valor para o campo `ConnectionStrings:DefaultConnection`, esse valor deve ser de acordo com o banco de dados criado no passo anterior.
+Caso o docker-compose não tenha sido alterado, as configurações serão as seguintes:
 
 ```json
 {
@@ -81,13 +90,31 @@ dotnet ef database update
 
 Partindo para o banco de dados, com um SGDB você deve acessar o database `dima-dev` e executar os comandos contidos em `desafio-caca-aos-bugs\bugs\Dima.Api\Data\Scripts\seed.sql` e `desafio-caca-aos-bugs\bugs\Dima.Api\Data\Scripts\views.sql`.
 
-### Executando API e WEB
+### Executando API e UI
 
-Vá até a pasta `desafio-caca-aos-bugs\bugs` e execute o seguinte comando docker:
+Nessa etapa vai ser executado as aplicações, onde será necessário deixa aberto dois terminais.
+
+Vá até a pasta `...\desafio-caca-aos-bugs\bugs` e execute os seguintes comandos (linha por linha) no terminal 1:
 
 ```bash
-docker-compose up --build
+dotnet clean
+dotnet restore
+dotnet build
 ```
+
+No mesmo terminal, vá até a pasta `...\desafio-caca-aos-bugs\bugs\Dima.Web` e execute os seguintes comandos para executar a UI:
+
+```bash
+dotnet run
+```
+
+Vá até a pasta `...\desafio-caca-aos-bugs\bugs\Dima.Api` e execute os seguintes comandos no terminal 2 para executar a API:
+
+```bash
+dotnet run
+```
+
+Pronto! Suas aplicações estão rodando localmente, basta verificar no terminal 1 a URL que está disponível a UI.
 
 # 💜 Participe
 Quer participar dos próximos desafios? Junte-se a [maior comunidade .NET do Brasil 🇧🇷 💜](https://balta.io/discord)
