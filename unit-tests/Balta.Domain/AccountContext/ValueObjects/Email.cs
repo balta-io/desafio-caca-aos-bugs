@@ -30,7 +30,7 @@ public partial record Email : ValueObject
 
     public static Email ShouldCreate(string address, IDateTimeProvider dateTimeProvider)
     {
-        address = address.Trim();
+        address = address?.Trim() ?? throw new InvalidEmailException();
         address = address.ToLowerInvariant();
 
         if (!EmailRegex().IsMatch(address))
