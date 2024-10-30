@@ -13,7 +13,6 @@ public class ReportHandler(AppDbContext context) : IReportHandler
     public async Task<Response<List<IncomesAndExpenses>?>> GetIncomesAndExpensesReportAsync(
         GetIncomesAndExpensesRequest request)
     {
-        await Task.Delay(1280);
         try
         {
             var data = await context
@@ -78,7 +77,6 @@ public class ReportHandler(AppDbContext context) : IReportHandler
 
     public async Task<Response<FinancialSummary?>> GetFinancialSummaryReportAsync(GetFinancialSummaryRequest request)
     {
-        await Task.Delay(3280);
         var startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         try
         {

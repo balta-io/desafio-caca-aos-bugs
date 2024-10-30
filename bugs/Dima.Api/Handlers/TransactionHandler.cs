@@ -57,7 +57,7 @@ public class TransactionHandler(AppDbContext context) : ITransactionHandler
             transaction.PaidOrReceivedAt = request.PaidOrReceivedAt;
             transaction.Title = request.Title;
             transaction.Type = request.Type;
-            
+
             await context.SaveChangesAsync();
 
             return new Response<Transaction?>(transaction, 200, "Transação atualizada com sucesso!");
