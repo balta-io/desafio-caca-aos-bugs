@@ -31,11 +31,10 @@ public class EmailTests
     public void ShouldFailIfEmailIsNull()
     {
 #pragma warning disable CS8625
-        var act = () 
-            => Email.ShouldCreate(null, FakeDateTimeProvider.Default);
+        var act = () => Email.ShouldCreate(null, FakeDateTimeProvider.Default);
 #pragma warning restore CS8625
 
-        Assert.ThrowsAny<Exception>(act);
+        Assert.ThrowsAny<InvalidEmailException>(act);
     }
 
     [Fact]
@@ -101,15 +100,17 @@ public class EmailTests
 
         Assert.NotEmpty((string)result);
     }
-    
-    [Fact]
-    public void ShouldReturnEmailWhenCallToStringMethod()
+
+    [Theory]
+    [InlineData("fake@email.com.br")]
+    [InlineData("teste@gmail.com")]
+    [InlineData("teste@hotmail.com")]
+    [InlineData("teste@hotmail.com.ar")]
+    public void ShouldReturnEmailWhenCallToStringMethod(string email)
     {
-        const string expected = "myemail@gmail.com";
-
         var result =
-            Email.ShouldCreate(expected, FakeDateTimeProvider.Default);
+            Email.ShouldCreate(email, FakeDateTimeProvider.Default);
 
-        Assert.Equal(expected, result.ToString());
+        Assert.Equal(email, result.ToString());
     }
 }
